@@ -8,7 +8,9 @@ export default {
     data() {
         return {
             seeso: null,
-            textArr: []
+            textArr: [],
+            windowCenter_x: 0,
+            windowCenter_y: 0,
         };
     },
     methods: {
@@ -59,17 +61,43 @@ export default {
         },
         highlightAction(spanElements) {
             // getBoundingClientRect() 호출
-            spanElements.forEach((span, index) => {
-            const rect = span.getBoundingClientRect();
-            console.log(`Span element ${index} is at y position: ${rect.y}`);
-            if (window.innerHeight * 0.4 < rect.y && rect.y < window.innerHeight * 0.6) {
-                span.classList.add('highlight');
-            } 
-            else {
-                span.classList.remove('highlight');
-            }
-        });
+            const elem = document.elementFromPoint(this.windowCenter_y);
+            // console.log('ㅃ;ㅣ야야약' + elem.getBoundingClientRect().y);
+            spanElements.forEach((span) => {
+                if (!span.hasAttribute('id')) return;
+                const rect = span.getBoundingClientRect();
+                console.log(rect.y)
+                // console.log(`Span element ${index} is at y position: ${rect.y}`);
+                // if (window.innerHeight * 0.4 < rect.y && rect.y < window.innerHeight * 0.6) {
+
+                if (elem.getBoundingClientRect().y == rect.y) {
+                    span.classList.add('highlight');
+                }
+                else {
+                    span.classList.remove('highlight');
+                }
+            });
+        },
+        findNearElement(spanElements) {
+            var minGap = window.innerHeight;
+            var nearElementList = [];
+            spanElements.forEach((span) => {
+                var gap = Math.abs(span.getBoundingClientRect() - this.windowCenter_y);
+                if (gap < minGap) {
+                    nearElementList = [];
+                    minGap = gap;
+                    nearElementList.push(span);
+                } else if (gap == minGap) {
+                    nearElementList.push(span);
+                }
+            })
+
+            return nearElementList;
         }
+    },
+    created() {
+        this.windowCenter_x = window.innerWidth / 2;
+        this.windowCenter_y = window.innerHeight / 2;
     },
     async mounted() {
         await this.makingText();
@@ -89,7 +117,6 @@ export default {
                 ticking = true;
             }
         });
-
         // (async () => { this.seeso.init(licenseKey, this.afterInitialized, this.afterFailed) })()
         // (async () => { this.seeso.init(licenseKey, this.onGaze, this.afterFailed) })()
 
@@ -112,6 +139,7 @@ export default {
 <style scoped>
 span {
     line-height: 2;
+    word-break: keep-all;
 }
 
 @keyframes fadeIn {
@@ -140,16 +168,11 @@ span {
     animation-name: fadeIn;
     animation-duration: 0.8s;
 }
+
 .removeHighlight {
     background-color: transparent;
     animation-name: fadeOut;
     animation-duration: 0.8s;
-}
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
 }
 </style>
 
