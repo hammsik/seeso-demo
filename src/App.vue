@@ -56,20 +56,39 @@ export default {
                         this.textArr.push(element.split(' '));
                     }
                 });
+        },
+        highlightAction(spanElements) {
+            // getBoundingClientRect() 호출
+            spanElements.forEach((span, index) => {
+            const rect = span.getBoundingClientRect();
+            console.log(`Span element ${index} is at y position: ${rect.y}`);
+            if (window.innerHeight * 0.4 < rect.y && rect.y < window.innerHeight * 0.6) {
+                span.classList.add('highlight');
+            } 
+            else {
+                span.classList.remove('highlight');
+            }
+        });
         }
     },
     async mounted() {
         await this.makingText();
         const spanElements = document.querySelectorAll('span');
 
-        spanElements.forEach((span, index) => {
-            const rect = span.getBoundingClientRect();
-            console.log(`Span element ${index} is at y position: ${rect.top}`);
-        });
-
-        // console.log(renderedText);
-
+        console.log(window.innerHeight);
         this.seeso = new EasySeeSo();
+        let ticking = false;
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    this.highlightAction(spanElements);
+                    ticking = false;
+                });
+
+                ticking = true;
+            }
+        });
 
         // (async () => { this.seeso.init(licenseKey, this.afterInitialized, this.afterFailed) })()
         // (async () => { this.seeso.init(licenseKey, this.onGaze, this.afterFailed) })()
@@ -94,6 +113,44 @@ export default {
 span {
     line-height: 2;
 }
+
+@keyframes fadeIn {
+    from {
+        background-color: transparent
+    }
+
+    to {
+        background-color: rgb(204, 216, 255);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        background-color: rgb(204, 216, 255);
+    }
+
+    to {
+        background-color: transparent
+    }
+}
+
+.highlight {
+    background-color: rgb(204, 216, 255);
+    /* transition: background-color 1s ease; */
+    animation-name: fadeIn;
+    animation-duration: 0.8s;
+}
+.removeHighlight {
+    background-color: transparent;
+    animation-name: fadeOut;
+    animation-duration: 0.8s;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
 </style>
 
 <template>
@@ -103,7 +160,8 @@ span {
     <h2 id="gazeInfo" style="text-align: center; color: red;"></h2>
     <span v-for='(item, index) in textArr' :key="index">
         &nbsp;
-        <span v-for='(item2, index) in item' :key="index" :id="'item-' + index">
+        <span v-for='(item2, index2) in item' :key="index2"
+            :id="'item-' + (textArr.slice(0, index).reduce((acc, val) => acc + val.length, 0) + index2)">
             {{ item2 + ' ' }}
         </span>
         <br>
