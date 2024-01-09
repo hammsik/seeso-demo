@@ -60,13 +60,13 @@ export default {
     },
     async mounted() {
         await this.makingText();
-        // const spanElements = document.querySelectorAll('span');
-        // console.log('sdfsdf: ' + spanElements.length);
-        // console.log(spanElements);
-        // spanElements.forEach((span, index) => {
-        //     const rect = span.getBoundingClientRect();
-        //     console.log(`Span element ${index} is at y position: ${rect.top}`);
-        // });
+        const spanElements = document.querySelectorAll('span');
+
+        spanElements.forEach((span, index) => {
+            const rect = span.getBoundingClientRect();
+            console.log(`Span element ${index} is at y position: ${rect.top}`);
+        });
+
         // console.log(renderedText);
 
         this.seeso = new EasySeeSo();
