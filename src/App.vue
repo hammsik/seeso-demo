@@ -60,29 +60,28 @@ export default {
                 });
         },
         highlightAction(spanElements) {
-            // getBoundingClientRect() 호출
-            const elem = document.elementFromPoint(this.windowCenter_y);
-            // console.log('ㅃ;ㅣ야야약' + elem.getBoundingClientRect().y);
+            // const elem = document.elementFromPoint(this.windowCenter_y);
+            var spanList = this.findNearElements(spanElements);
+            var minSpanId = parseInt(spanList[0].id);
+            var maxSpanId = parseInt(spanList[spanList.length - 1].id);
             spanElements.forEach((span) => {
-                if (!span.hasAttribute('id')) return;
-                const rect = span.getBoundingClientRect();
-                console.log(rect.y)
-                // console.log(`Span element ${index} is at y position: ${rect.y}`);
-                // if (window.innerHeight * 0.4 < rect.y && rect.y < window.innerHeight * 0.6) {
-
-                if (elem.getBoundingClientRect().y == rect.y) {
-                    span.classList.add('highlight');
-                }
-                else {
+                var targetSpanId = parseInt(span.id);
+                if (targetSpanId < minSpanId || targetSpanId > maxSpanId) {
                     span.classList.remove('highlight');
                 }
+
+            })
+            spanList.forEach((span) => {
+                console.log(parseInt(span.id) + ', ' + minSpanId);
+                span.classList.add('highlight');
             });
         },
-        findNearElement(spanElements) {
+        findNearElements(spanElements) {
             var minGap = window.innerHeight;
             var nearElementList = [];
             spanElements.forEach((span) => {
-                var gap = Math.abs(span.getBoundingClientRect() - this.windowCenter_y);
+                var gap = Math.abs(span.getBoundingClientRect().y - this.windowCenter_y);
+                console.log(gap);
                 if (gap < minGap) {
                     nearElementList = [];
                     minGap = gap;
@@ -91,7 +90,8 @@ export default {
                     nearElementList.push(span);
                 }
             })
-
+            console.log(nearElementList);
+            if (!(nearElementList[0].hasAttribute('id'))) nearElementList.shift();
             return nearElementList;
         }
     },
@@ -102,6 +102,7 @@ export default {
     async mounted() {
         await this.makingText();
         const spanElements = document.querySelectorAll('span');
+        this.highlightAction(spanElements);
 
         console.log(window.innerHeight);
         this.seeso = new EasySeeSo();
@@ -166,7 +167,7 @@ span {
     background-color: rgb(204, 216, 255);
     /* transition: background-color 1s ease; */
     animation-name: fadeIn;
-    animation-duration: 0.8s;
+    animation-duration: 0.5s;
 }
 
 .removeHighlight {
@@ -184,7 +185,7 @@ span {
     <span v-for='(item, index) in textArr' :key="index">
         &nbsp;
         <span v-for='(item2, index2) in item' :key="index2"
-            :id="'item-' + (textArr.slice(0, index).reduce((acc, val) => acc + val.length, 0) + index2)">
+            :id="(textArr.slice(0, index).reduce((acc, val) => acc + val.length, 0) + index2)">
             {{ item2 + ' ' }}
         </span>
         <br>
