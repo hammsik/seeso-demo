@@ -9,8 +9,6 @@ export default {
         return {
             seeso: null,
             textArr: [],
-            windowCenter_x: 0,
-            windowCenter_y: 0,
             spanElements: null,
         };
     },
@@ -111,13 +109,6 @@ export default {
 
         },
     },
-
-
-    created() {
-        this.windowCenter_x = window.innerWidth / 2;
-        this.windowCenter_y = window.innerHeight / 2;
-    },
-
 
     async mounted() {
         document.body.style.overflow = 'hidden';
