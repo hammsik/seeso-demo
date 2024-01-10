@@ -11,6 +11,7 @@ export default {
             textArr: [],
             windowCenter_x: 0,
             windowCenter_y: 0,
+            spanElements: null,
         };
     },
 
@@ -94,7 +95,14 @@ export default {
             })
             if (!(nearElementList[0].hasAttribute('id'))) nearElementList.shift();
             return nearElementList;
+        },
+        handleScroll() {
+            window.requestAnimationFrame(() => {
+                this.highlightAction(this.spanElements);
+            });
         }
+
+
     },
 
 
@@ -105,24 +113,14 @@ export default {
 
 
     async mounted() {
+        document.body.style.overflow = 'hidden';
         await this.makingText();
-        const spanElements = document.querySelectorAll('span');
-        this.highlightAction(spanElements);
+        this.spanElements = document.querySelectorAll('span');
+        this.highlightAction(this.spanElements);
 
         console.log(window.innerHeight);
         this.seeso = new EasySeeSo();
-        let ticking = false;
 
-        window.addEventListener('scroll', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    this.highlightAction(spanElements);
-                    ticking = false; ``
-                });
-
-                ticking = true;
-            }
-        });
         this.$nextTick(() => {
             const canvas = document.getElementById("output");
             canvas.width = window.innerWidth;
@@ -173,10 +171,12 @@ span {
 </style>
 
 <template>
-    <div style="position: relative">
-        <canvas id="output" style="overflow: hidden; position: absolute; z-index: 1;"></canvas>
+    <div style="position: relative;">
+        <canvas id="output" style="; position: absolute; z-index: 1;"></canvas>
         <!-- <button id="calibrationButton" style="margin: 0 auto;"> Start Calibration </button> -->
-        <div id="text-layout" style="position: absolute; z-index: 2;">
+        <div id="text-layout"
+            style="position: absolute; z-index: 2; height: 100vh; width: 100vw; padding: 10px; overflow: auto;"
+            @scroll="handleScroll">
             <span v-for='(item, index) in textArr' :key="index">
                 &nbsp;
                 <span v-for='(item2, index2) in item' :key="index2"
@@ -188,4 +188,3 @@ span {
         </div>
     </div>
 </template>
-  
