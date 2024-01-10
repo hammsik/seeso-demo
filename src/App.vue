@@ -109,12 +109,12 @@ export default {
             return nearElementList;
         },
         autoScroll(gazeInfo_y) {
-            var maxScrollSpeed = 10;
-            var scrollSpeed = (gazeInfo_y / window.innerHeight) * maxScrollSpeed;
-            var textLayout = document.getElementById('text-layout'); // text-layout 요소를 가져옵니다.
+            const maxScrollSpeed = 6;
+            const scrollSpeed = (gazeInfo_y / window.innerHeight) * maxScrollSpeed;
+            const textLayout = document.getElementById('text-layout'); // text-layout 요소를 가져옵니다.
             textLayout.scrollTop += scrollSpeed;// 페이지를 스크롤합니다.
 
-        }
+        },
     },
 
 
