@@ -27,8 +27,6 @@ export default {
         onGaze(gazeInfo) {
             if (gazeInfo.trackingState === TrackingState.SUCCESS) {
                 let canvas = document.getElementById("output")
-                // canvas.width = window.innerWidth
-                // canvas.height = window.innerHeight
                 let ctx = canvas.getContext("2d");
                 ctx.fillStyle = '#EF4040'
                 ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -52,12 +50,12 @@ export default {
             const jsonString = queryString.slice("calibrationData=".length, queryString.length)
             return jsonString
         },
-        onClickCalibrationBtn() {
-            const userId = 'hammsik'; // ex) 5e9easf293
-            const redirectUrl = 'http://localhost:8083';
-            const calibrationPoint = 5;
-            EasySeeSo.openCalibrationPage(licenseKey, userId, redirectUrl, calibrationPoint);
-        },
+        // onClickCalibrationBtn() {
+        //     const userId = 'hammsik';
+        //     const redirectUrl = 'https://localhost:8083';
+        //     const calibrationPoint = 5;
+        //     EasySeeSo.openCalibrationPage(licenseKey, userId, redirectUrl, calibrationPoint);
+        // },
         makingText() {
             return fetch('/inputText.txt')
                 .then(response => response.text())
@@ -70,7 +68,6 @@ export default {
                 });
         },
         highlightAction(x, y) {
-            // const elem = document.elementFromPoint(this.windowCenter_y);
             var spanList = this.findNearElements(x, y);
             if (spanList == null) {
                 this.spanElements.forEach((span) => { span.classList.remove('highlight'); })
@@ -85,7 +82,6 @@ export default {
 
                 })
                 spanList.forEach((span) => {
-                    // console.log(parseInt(span.id) + ', ' + minSpanId);
                     span.classList.add('highlight');
                 });
             }
@@ -96,7 +92,6 @@ export default {
             var nearElementList = [];
             this.spanElements.forEach((span) => {
                 var gap = Math.abs(span.getBoundingClientRect().y - y);
-                // console.log(gap);
                 if (gap < minGap) {
                     nearElementList = [];
                     minGap = gap;
@@ -111,8 +106,8 @@ export default {
         autoScroll(gazeInfo_y) {
             const maxScrollSpeed = 6;
             const scrollSpeed = (gazeInfo_y / window.innerHeight) * maxScrollSpeed;
-            const textLayout = document.getElementById('text-layout'); // text-layout 요소를 가져옵니다.
-            textLayout.scrollTop += scrollSpeed;// 페이지를 스크롤합니다.
+            const textLayout = document.getElementById('text-layout');
+            textLayout.scrollTop += scrollSpeed;
 
         },
     },
@@ -128,7 +123,6 @@ export default {
         document.body.style.overflow = 'hidden';
         await this.makingText();
         this.spanElements = document.querySelectorAll('span');
-        // this.highlightAction(this.spanElements);
 
         console.log(window.innerHeight);
         this.seeso = new EasySeeSo();
@@ -138,7 +132,6 @@ export default {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
-        // (async () => { this.seeso.init(licenseKey, this.afterInitialized, this.afterFailed) })()
 
         // const calibrationData = this.parseCalibrationDataInQueryString()
         // if (calibrationData) {
