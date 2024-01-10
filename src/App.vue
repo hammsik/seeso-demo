@@ -34,10 +34,14 @@ export default {
                 ctx.clearRect(0, 0, canvas.width, canvas.height)
                 ctx.beginPath();
                 ctx.arc(gazeInfo.x, gazeInfo.y, 10, 0, Math.PI * 2, true);
-                ctx.fillStyle = 
-                ctx.fill();
+                ctx.fillStyle =
+                    ctx.fill();
                 console.log(gazeInfo.x + ', ' + gazeInfo.y)
                 this.highlightAction(gazeInfo.x, gazeInfo.y);
+
+                if (gazeInfo.y > window.innerHeight * 0.3) {
+                    this.autoScroll(gazeInfo.y);
+                }
             }
         },
         parseCalibrationDataInQueryString() {
@@ -78,7 +82,7 @@ export default {
                     if (targetSpanId < minSpanId || targetSpanId > maxSpanId) {
                         span.classList.remove('highlight');
                     }
-    
+
                 })
                 spanList.forEach((span) => {
                     // console.log(parseInt(span.id) + ', ' + minSpanId);
@@ -104,6 +108,13 @@ export default {
             if (!(nearElementList[0].hasAttribute('id'))) nearElementList.shift();
             return nearElementList;
         },
+        autoScroll(gazeInfo_y) {
+            var maxScrollSpeed = 10;
+            var scrollSpeed = (gazeInfo_y / window.innerHeight) * maxScrollSpeed;
+            var textLayout = document.getElementById('text-layout'); // text-layout 요소를 가져옵니다.
+            textLayout.scrollTop += scrollSpeed;// 페이지를 스크롤합니다.
+
+        }
     },
 
 
@@ -176,7 +187,7 @@ span {
         <canvas id="output" style="; position: absolute; z-index: 1;"></canvas>
         <!-- <button id="calibrationButton" style="margin: 0 auto;"> Start Calibration </button> -->
         <div id="text-layout"
-            style="position: absolute; z-index: 2; height: 100vh; width: 100vw; margin: 10px; overflow: auto;"
+            style="position: absolute; z-index: 2; height: 100vh; width: 100vw; padding: 10px; overflow: auto;"
             @scroll="handleScroll">
             <span v-for='(item, index) in textArr' :key="index">
                 &nbsp;
