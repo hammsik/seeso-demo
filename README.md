@@ -1,9 +1,11 @@
-# test1
+# seeso-demo
+Seeso sdk를 활용한 시선 추적 프로젝트입니다.
 
-## Project setup
+<!-- ## Project setup
 ```
 npm install
 ```
+
 
 ### Compiles and hot-reloads for development
 ```
@@ -21,4 +23,4 @@ npm run lint
 ```
 
 ### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+See [Configuration Reference](https://cli.vuejs.org/config/). -->
