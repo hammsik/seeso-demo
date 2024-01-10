@@ -39,7 +39,7 @@ export default {
                 console.log(gazeInfo.x + ', ' + gazeInfo.y)
                 this.highlightAction(gazeInfo.x, gazeInfo.y);
 
-                if (gazeInfo.y > window.innerHeight * 0.3) {
+                if (gazeInfo.y > window.innerHeight * 0.2) {
                     this.autoScroll(gazeInfo.y);
                 }
             }
