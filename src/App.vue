@@ -30,11 +30,14 @@ export default {
                 // canvas.width = window.innerWidth
                 // canvas.height = window.innerHeight
                 let ctx = canvas.getContext("2d");
-                ctx.fillStyle = '#FF0000'
+                ctx.fillStyle = '#EF4040'
                 ctx.clearRect(0, 0, canvas.width, canvas.height)
                 ctx.beginPath();
                 ctx.arc(gazeInfo.x, gazeInfo.y, 10, 0, Math.PI * 2, true);
+                ctx.fillStyle = 
                 ctx.fill();
+                console.log(gazeInfo.x + ', ' + gazeInfo.y)
+                this.highlightAction(gazeInfo.x, gazeInfo.y);
             }
         },
         parseCalibrationDataInQueryString() {
@@ -62,28 +65,33 @@ export default {
                     }
                 });
         },
-        highlightAction(spanElements) {
+        highlightAction(x, y) {
             // const elem = document.elementFromPoint(this.windowCenter_y);
-            var spanList = this.findNearElements(spanElements);
-            var minSpanId = parseInt(spanList[0].id);
-            var maxSpanId = parseInt(spanList[spanList.length - 1].id);
-            spanElements.forEach((span) => {
-                var targetSpanId = parseInt(span.id);
-                if (targetSpanId < minSpanId || targetSpanId > maxSpanId) {
-                    span.classList.remove('highlight');
-                }
-
-            })
-            spanList.forEach((span) => {
-                // console.log(parseInt(span.id) + ', ' + minSpanId);
-                span.classList.add('highlight');
-            });
+            var spanList = this.findNearElements(x, y);
+            if (spanList == null) {
+                this.spanElements.forEach((span) => { span.classList.remove('highlight'); })
+            } else {
+                var minSpanId = parseInt(spanList[0].id);
+                var maxSpanId = parseInt(spanList[spanList.length - 1].id);
+                this.spanElements.forEach((span) => {
+                    var targetSpanId = parseInt(span.id);
+                    if (targetSpanId < minSpanId || targetSpanId > maxSpanId) {
+                        span.classList.remove('highlight');
+                    }
+    
+                })
+                spanList.forEach((span) => {
+                    // console.log(parseInt(span.id) + ', ' + minSpanId);
+                    span.classList.add('highlight');
+                });
+            }
         },
-        findNearElements(spanElements) {
+        findNearElements(x, y) {
+            if (x < 0 || x > window.innerWidth || y < 0 || y > window.innerHeight) return null;
             var minGap = window.innerHeight;
             var nearElementList = [];
-            spanElements.forEach((span) => {
-                var gap = Math.abs(span.getBoundingClientRect().y - this.windowCenter_y); // 일단은 화면 가운데로
+            this.spanElements.forEach((span) => {
+                var gap = Math.abs(span.getBoundingClientRect().y - y);
                 // console.log(gap);
                 if (gap < minGap) {
                     nearElementList = [];
@@ -96,13 +104,6 @@ export default {
             if (!(nearElementList[0].hasAttribute('id'))) nearElementList.shift();
             return nearElementList;
         },
-        handleScroll() {
-            window.requestAnimationFrame(() => {
-                this.highlightAction(this.spanElements);
-            });
-        }
-
-
     },
 
 
@@ -116,7 +117,7 @@ export default {
         document.body.style.overflow = 'hidden';
         await this.makingText();
         this.spanElements = document.querySelectorAll('span');
-        this.highlightAction(this.spanElements);
+        // this.highlightAction(this.spanElements);
 
         console.log(window.innerHeight);
         this.seeso = new EasySeeSo();
@@ -149,7 +150,7 @@ export default {
 
 <style scoped>
 span {
-    line-height: 2;
+    line-height: 3;
     word-break: keep-all;
 }
 
@@ -175,7 +176,7 @@ span {
         <canvas id="output" style="; position: absolute; z-index: 1;"></canvas>
         <!-- <button id="calibrationButton" style="margin: 0 auto;"> Start Calibration </button> -->
         <div id="text-layout"
-            style="position: absolute; z-index: 2; height: 100vh; width: 100vw; padding: 10px; overflow: auto;"
+            style="position: absolute; z-index: 2; height: 100vh; width: 100vw; margin: 10px; overflow: auto;"
             @scroll="handleScroll">
             <span v-for='(item, index) in textArr' :key="index">
                 &nbsp;
